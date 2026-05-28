@@ -1,0 +1,19 @@
+%% Big picture — one clinical note's journey through the pipeline.
+%% Source ASCII: EXTRACTOR_EXPLAINED.md section 1.
+flowchart TD
+    note["Clinical note<br/>.txt or .pdf"]
+    text["Full text (str)"]
+    chunks["Overlapping chunks[]"]
+    llm[/"Llama 3.2 1B<br/>local GGUF, CPU-only"/]
+    perchunk["Per-chunk JSON dicts"]
+    merged["Merged JSON"]
+    final["Final JSON (cleaned)"]
+    out[("outputs/<br/>*.json + summary.csv")]
+
+    note -->|"read_document"| text
+    text -->|"chunk_text — sliding window"| chunks
+    chunks -->|"per chunk: extract_json"| perchunk
+    llm -.->|"grammar-constrains the sampler"| perchunk
+    perchunk -->|"merge_extractions<br/>first-non-null / union / dedupe"| merged
+    merged -->|"clean_extraction<br/>rule-based normalizers"| final
+    final -->|"write"| out

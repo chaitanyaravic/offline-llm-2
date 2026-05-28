@@ -1,0 +1,28 @@
+%% End-to-end walk-through of note1.txt through the pipeline.
+%% Source ASCII: EXTRACTOR_EXPLAINED.md section 8.
+sequenceDiagram
+    actor User
+    participant CLI as cli.py
+    participant Pipe as pipeline.py
+    participant Ingest as ingest.py
+    participant Model as model.py
+    participant Extract as extract.py
+    participant Clean as cleanup.py
+    participant Disk as outputs/
+
+    User->>CLI: python -m extractor.cli --input samples
+    CLI->>Pipe: extract_from_file(llm, note1.txt)
+    Pipe->>Ingest: read_document(path)
+    Ingest-->>Pipe: ~700 chars of text
+    Pipe->>Ingest: chunk_text(text)
+    Ingest-->>Pipe: 1 chunk (fits in n_ctx)
+    Note over Model: model already loaded (~3s first time)
+    Pipe->>Extract: extract_json(llm, chunk)
+    Extract->>Model: create_chat_completion (grammar-constrained)
+    Model-->>Extract: schema-valid JSON
+    Extract-->>Pipe: patient, diagnoses, medications
+    Pipe->>Ingest: merge_extractions([json])
+    Ingest-->>Pipe: same dict (only one chunk)
+    Pipe->>Clean: clean_extraction(dict)
+    Clean-->>Pipe: ISO dates, merged dx, stripped doses
+    Pipe->>Disk: write note1.json + summary.csv row

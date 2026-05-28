@@ -1,0 +1,19 @@
+%% Module dependency graph — one-way chain composed by cli.py.
+%% Source ASCII: EXTRACTOR_EXPLAINED.md section 7.
+flowchart TD
+    cli["cli.py<br/>argparse + driver"]
+    pipeline["pipeline.py<br/>extract_from_file"]
+    ingest["ingest.py<br/>read + chunk + merge"]
+    extract["extract.py<br/>extract_text / extract_json"]
+    prompts["prompts.py<br/>system + few-shot + build_messages"]
+    schema["schema.py<br/>EXTRACTION_SCHEMA"]
+    cleanup["cleanup.py<br/>dates / routes / freq / dose / dx merge"]
+    model["model.py<br/>load_model / generate"]
+
+    cli -->|"calls"| pipeline
+    pipeline -->|"calls"| ingest
+    pipeline -->|"calls"| extract
+    pipeline -->|"calls"| cleanup
+    pipeline -->|"calls"| model
+    extract -->|"uses"| prompts
+    extract -->|"uses"| schema

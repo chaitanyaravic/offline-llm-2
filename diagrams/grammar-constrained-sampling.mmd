@@ -1,0 +1,20 @@
+%% Grammar-constrained sampling — how the schema forces valid JSON.
+%% Source ASCII: EXTRACTOR_EXPLAINED.md sections 4 and 10.
+%% The grammar (derived from EXTRACTION_SCHEMA) masks the sampler at every
+%% step: illegal next-tokens get probability 0, so invalid JSON is impossible.
+flowchart TD
+    start["Model needs the next token"]
+    logits["Forward pass produces logits<br/>(a score for every vocab token)"]
+    grammar{"Allowed by the grammar<br/>right now?"}
+    keep["Keep the token's probability"]
+    zero["Set probability = 0"]
+    sample["Sample among allowed tokens<br/>temperature=0 → pick the most likely"]
+    append["Append token, then repeat"]
+
+    start --> logits --> grammar
+    grammar -->|"legal next token"| keep
+    grammar -->|"would break the schema"| zero
+    keep --> sample
+    zero --> sample
+    sample --> append
+    append --> start

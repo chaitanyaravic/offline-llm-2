@@ -1,0 +1,25 @@
+%% Overlap chunking + merge — why long notes are split and recombined.
+%% Source ASCII: EXTRACTOR_EXPLAINED.md section 6.
+%% Overlap (500 chars) ensures a field straddling a boundary appears whole
+%% in at least one chunk.
+flowchart TD
+    long["Long note (~13,000 chars)"]
+    c1["chunk 1<br/>chars 0–5000"]
+    c2["chunk 2<br/>chars 4500–9500"]
+    c3["chunk 3<br/>chars 9000–14000"]
+    j1["chunk-1 JSON"]
+    j2["chunk-2 JSON"]
+    j3["chunk-3 JSON"]
+    merge{{"merge_extractions"}}
+    one["One merged JSON"]
+
+    long -->|"chunk_text<br/>max_chars=5000, overlap=500"| c1
+    long --> c2
+    long --> c3
+    c1 -->|"extract_json"| j1
+    c2 -->|"extract_json"| j2
+    c3 -->|"extract_json"| j3
+    j1 --> merge
+    j2 --> merge
+    j3 --> merge
+    merge -->|"scalars: first non-null<br/>diagnoses: union, case-insensitive<br/>medications: dedupe by lowercased name"| one

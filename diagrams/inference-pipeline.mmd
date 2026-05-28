@@ -1,0 +1,17 @@
+%% Inference pipeline — the per-token generation loop.
+%% Source ASCII: EXTRACTOR_EXPLAINED.md section 10 ("Inference pipeline").
+%% On a 1B model on CPU one forward pass is ~50-200 ms, so a 600-token
+%% response takes several seconds.
+flowchart LR
+    input["Input text"]
+    tok["1. Tokenize input"]
+    fwd["2. Forward pass through all layers → logits"]
+    mask["3. Apply temperature + grammar mask"]
+    samp["4. Sample the next token"]
+    app["5. Append to output"]
+    check{"max_tokens reached<br/>or stop token?"}
+    done["Return generated text"]
+
+    input --> tok --> fwd --> mask --> samp --> app --> check
+    check -->|"no — keep going"| fwd
+    check -->|"yes"| done

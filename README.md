@@ -133,6 +133,9 @@ cli ─► pipeline ─► ingest
                 ─► model
 ```
 
+Editable Mermaid versions of these (and the chunk/merge, sampling, and
+end-to-end flows) live in [`diagrams/`](diagrams/) and render on GitHub.
+
 ## Project structure
 
 ```
@@ -141,6 +144,7 @@ offline-llm/
 ├── samples/                    8 synthetic clinical notes (5 scored, 3 edge-case)
 ├── scripts/                    per-phase demo scripts (phase1..phase5)
 ├── tests/                      58 pytest tests; LLM is mocked
+├── diagrams/                   Mermaid sources for the architecture/flow diagrams
 ├── outputs/                    CLI output (.gitignored)
 ├── models/                     GGUF files (.gitignored)
 ├── venv/                       virtualenv (.gitignored)
@@ -180,11 +184,18 @@ offline-llm/
 |---------------------------------------------------|--------------------------------------------------------------------|
 | [INSTRUCTIONS.md](INSTRUCTIONS.md)                | Phase-by-phase learning guide. Start here.                         |
 | [EXTRACTOR_EXPLAINED.md](EXTRACTOR_EXPLAINED.md)  | ASCII diagrams of every major concept.                             |
+| [diagrams/](diagrams/)                            | Editable Mermaid sources for the architecture/flow diagrams.       |
 | [VALIDATION.md](VALIDATION.md)                    | Honest end-to-end accuracy on the original 5 synthetic notes.      |
 | [CLAUDE.md](CLAUDE.md)                            | Commands + architecture for future contributors.                   |
 | [PROGRESS.md](PROGRESS.md)                        | Status log for resuming a session.                                 |
 | [EXERCISES.md](EXERCISES.md)                      | *Optional* extension menu (challenges, not part of the shipped pipeline). |
 | [TEACHING_PLAYBOOK.md](TEACHING_PLAYBOOK.md)      | The teaching style this project follows.                           |
+
+---
+
+## Built with
+
+This project was built with [Claude Code](https://claude.ai/code) powered by **Claude Opus 4.7**.
 
 ---
 

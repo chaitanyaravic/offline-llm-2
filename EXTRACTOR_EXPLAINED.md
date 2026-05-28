@@ -3,6 +3,10 @@
 ASCII diagrams of every concept in the project, in the order you meet them
 in `INSTRUCTIONS.md`. Open this file when something feels abstract.
 
+> Editable Mermaid versions of the architecture/flow diagrams live in
+> [`diagrams/`](diagrams/) — they render on GitHub and map back to the
+> numbered sections below.
+
 ---
 
 ## 1. Big picture
