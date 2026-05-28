@@ -1,0 +1,22 @@
+PROGRESS NOTE — ENDOCRINOLOGY CLINIC
+
+Patient: Maria Garcia      MRN: 88-44-2210
+DOB: June 22, 1980         Sex: F
+Visit Date: 5/9/2026
+
+CHIEF COMPLAINT:
+Follow-up for type 2 diabetes and hyperlipidemia.
+
+ASSESSMENT:
+1. Type 2 diabetes mellitus, A1c 7.4% (improved from 8.1%)
+2. Hyperlipidemia, on statin therapy
+3. Obesity, BMI 33
+
+CURRENT MEDICATIONS:
+Metformin 1000 mg by mouth twice a day
+Atorvastatin 20 mg PO at bedtime
+Empagliflozin 10 mg PO daily
+
+PLAN:
+Continue current regimen. Recheck A1c in 3 months. Encouraged dietary
+modification and 150 minutes/week of moderate exercise.

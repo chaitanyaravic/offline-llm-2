@@ -1,0 +1,21 @@
+DISCHARGE SUMMARY — ONCOLOGY
+
+Patient: Sarah Patel
+MRN: ON-553-2210
+DOB: 11/02/1971       Sex: F
+Admit Date: April 18, 2026
+Discharge Date: April 24, 2026
+
+DIAGNOSES:
+1. Stage III invasive ductal carcinoma, left breast.
+2. Severe nausea, chemotherapy-induced.
+3. Uncontrolled type 2 diabetes mellitus, A1c 9.6%.
+4. Hypothyroidism, stable.
+
+DISCHARGE MEDICATIONS:
+- Tamoxifen 20 mg by mouth once daily
+- Ondansetron 8 mg PO every 8 hours PRN nausea
+- Metformin 1000 mg PO twice daily
+- Levothyroxine 75 mcg PO every morning
+
+Follow-up with medical oncology in 2 weeks.

@@ -1,0 +1,26 @@
+PSYCHIATRY OUTPATIENT FOLLOW-UP
+
+Pt name: David Kim
+MRN: PSY-4421
+DOB: 9-30-1992    Sex: M
+Date seen: 05-02-2026
+
+INTERVAL HISTORY:
+Mr. Kim returns for medication management. Reports improvement in
+depressive symptoms since last visit. Sleep has normalized. Denies
+suicidal ideation. Anxiety remains moderate, particularly in social
+settings at work.
+
+ASSESSMENT:
+1. Major depressive disorder, recurrent, moderate, partial remission.
+2. Generalized anxiety disorder, mild.
+3. Insomnia, resolved.
+
+MEDICATIONS:
+Sertraline 100mg PO daily
+Bupropion XL 150mg PO every morning
+Hydroxyzine 25 mg by mouth at bedtime as needed for anxiety
+
+PLAN:
+Continue current regimen. Will trial increasing sertraline to 150 mg
+daily at next visit if anxiety persists. Return to clinic in 6 weeks.

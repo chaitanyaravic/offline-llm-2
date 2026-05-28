@@ -1,0 +1,18 @@
+OUTPATIENT VISIT — PEDIATRICS
+
+Name: Lily Nguyen
+MRN: P-7740022
+DOB: 02/14/2018
+Sex: female
+Date of visit: 4/30/2026
+
+Reason for visit: well-child check, age 8.
+
+Assessment:
+1. Healthy 8-year-old female, growth and development on track.
+2. Mild atopic dermatitis, stable on emollients.
+
+Current medications:
+- Hydrocortisone 1% cream, apply topically to affected areas BID PRN itching.
+
+Plan: routine follow-up in 1 year. Vaccinations up to date.

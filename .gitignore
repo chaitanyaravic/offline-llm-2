@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Models (large GGUF files — never commit these)
+models/*.gguf
+models/*.bin
+models/*.safetensors
+
+# Outputs
+outputs/
+*.log
+
+# OS
+.DS_Store
+*.swp
+
+# Editor
+.idea/
+.vscode/

@@ -1,0 +1,29 @@
+DISCHARGE SUMMARY
+
+Patient: John Smith
+MRN: 12345678
+DOB: 03/15/1957  Sex: M
+Admit Date: 2026-04-10
+Discharge Date: 2026-04-15
+
+DIAGNOSES:
+1. Acute exacerbation of chronic obstructive pulmonary disease (COPD)
+2. Community-acquired pneumonia, right lower lobe
+3. Hypertension, well-controlled
+
+MEDICATIONS AT DISCHARGE:
+- Albuterol inhaler 90 mcg, 2 puffs every 4 hours as needed
+- Prednisone 40 mg PO daily for 5 days
+- Azithromycin 500 mg PO daily for 5 days
+- Lisinopril 10 mg PO daily
+
+HOSPITAL COURSE:
+Mr. Smith is a 69-year-old male with a known history of COPD who presented
+to the emergency department with three days of worsening shortness of breath
+and productive cough yielding yellow-green sputum. Chest X-ray on admission
+demonstrated a right lower lobe infiltrate. He was admitted, started on
+broad-spectrum antibiotics and corticosteroids, and improved over five days.
+He is discharged in stable condition on the medications listed above.
+
+FOLLOW-UP:
+Pulmonology in 2 weeks. Primary care in 1 week.

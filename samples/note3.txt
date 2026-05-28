@@ -1,0 +1,21 @@
+EMERGENCY DEPARTMENT NOTE
+
+Pt: Robert Lee     MRN 22-99-1145
+DOB June 5, 1948   Sex Male
+Encounter: 5/12/2026 14:22
+
+CC: Chest pain.
+
+HPI:
+78 y/o M with PMHx of CAD s/p CABG (2019), hypertension, and HFrEF (EF 35%)
+presents with substernal chest pressure x2 hours, radiating to left arm,
+associated diaphoresis. Took 1 SL nitro at home with partial relief.
+
+ASSESSMENT/PLAN:
+1. NSTEMI - troponin pending; aspirin 325mg PO chewed in ED; heparin gtt
+   started; cardiology consulted.
+2. Hypertension - hold home lisinopril until BP stable.
+3. HFrEF, chronic.
+
+DISCHARGE MEDS (admitted, none at this time):
+- Continue home metoprolol succinate 50 mg PO daily.

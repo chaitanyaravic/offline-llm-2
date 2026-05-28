@@ -1,0 +1,18 @@
+INPATIENT CONSULT — INFECTIOUS DISEASE
+
+Name: Anna O'Brien
+MRN: 78-3322-19
+DOB: 12 March 1955
+Sex: female
+Encounter date: 2026/04/27
+
+IMPRESSION:
+1. MRSA bacteremia, catheter-associated.
+2. Acute on chronic kidney disease, stage 3.
+
+RECOMMENDATIONS:
+- Vancomycin 1.5 g IV every 12 hours
+- Continue home Lisinopril 20 mg PO daily
+- Continue home Aspirin 81 mg PO daily
+
+Will follow daily.

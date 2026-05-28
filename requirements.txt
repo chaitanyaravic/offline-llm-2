@@ -1,0 +1,11 @@
+# Direct dependencies only, pinned to versions verified in this project.
+# Transitive deps (numpy, jinja2, pluggy, etc.) are pulled in automatically.
+
+# Runtime: load and run the GGUF model
+llama-cpp-python==0.3.23
+
+# Runtime: read PDF clinical notes (Phase 5)
+pypdf==6.12.1
+
+# Dev: pytest test runner (Phase 7)
+pytest==9.0.3
