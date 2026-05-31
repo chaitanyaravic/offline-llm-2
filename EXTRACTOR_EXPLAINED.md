@@ -3,6 +3,16 @@
 ASCII diagrams of every concept in the project, in the order you meet them
 in `INSTRUCTIONS.md`. Open this file when something feels abstract.
 
+**Who this is for.** Readers who have skimmed `INSTRUCTIONS.md` and want
+a picture instead of prose. General programming knowledge is assumed; LLM
+specifics (GGUF, grammar-constrained sampling, chunking, merging) are
+visualised from first principles.
+
+**Mental-model anchor.** Same as the rest of the project: a deterministic
+ETL pipeline with one probabilistic step (the LLM call) in the middle,
+clamped by a JSON Schema on input and rule-based normalizers on output.
+Every diagram below is a zoom-in on one stage of that pipeline.
+
 > Editable Mermaid versions of the architecture/flow diagrams live in
 > [`diagrams/`](diagrams/) — they render on GitHub and map back to the
 > numbered sections below.

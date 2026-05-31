@@ -4,6 +4,18 @@ A fully **offline** pipeline that reads clinical notes (`.txt` or `.pdf`),
 extracts structured fields with a small local LLM, normalizes the result,
 and writes per-file JSON plus a summary CSV.
 
+**Who this is for.** Engineers who already know general software
+practice (CLIs, tests, packaging, JSON, regex) and want a worked
+example of running a local LLM end-to-end. Local-LLM specifics
+(GGUF, quantization, JSON-Schema-constrained sampling, chunking,
+merging) are introduced from first principles in `INSTRUCTIONS.md`;
+everyday programming basics are assumed.
+
+**Mental-model anchor.** A deterministic ETL pipeline — read,
+transform, write — with **one probabilistic step in the middle** (the
+LLM call), boxed in by a JSON Schema on input and rule-based
+normalizers on output. Everything else is ordinary, testable Python.
+
 ---
 
 ## Overall summary
@@ -153,9 +165,7 @@ offline-llm/
 ├── EXTRACTOR_EXPLAINED.md      ASCII diagrams of every concept
 ├── VALIDATION.md               accuracy report on the 5 sample notes
 ├── EXERCISES.md                optional extension menu for learners
-├── PROGRESS.md                 session-resume status log
 ├── CLAUDE.md                   commands + architecture for future sessions
-├── TEACHING_PLAYBOOK.md        the teaching style this project follows
 ├── README.md                   this file
 ├── requirements.txt
 └── .gitignore
@@ -187,9 +197,7 @@ offline-llm/
 | [diagrams/](diagrams/)                            | Editable Mermaid sources for the architecture/flow diagrams.       |
 | [VALIDATION.md](VALIDATION.md)                    | Honest end-to-end accuracy on the original 5 synthetic notes.      |
 | [CLAUDE.md](CLAUDE.md)                            | Commands + architecture for future contributors.                   |
-| [PROGRESS.md](PROGRESS.md)                        | Status log for resuming a session.                                 |
 | [EXERCISES.md](EXERCISES.md)                      | *Optional* extension menu (challenges, not part of the shipped pipeline). |
-| [TEACHING_PLAYBOOK.md](TEACHING_PLAYBOOK.md)      | The teaching style this project follows.                           |
 
 ---
 

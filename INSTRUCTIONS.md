@@ -4,6 +4,18 @@ A local, offline pipeline that reads clinical notes, extracts structured
 fields with a small open-weights LLM, and cleans up the result.
 We build it in **8 phases**, one new concept at a time.
 
+**Who this is for.** An engineer comfortable with general software
+practice (CLIs, tests, packaging, JSON, regex) but new to local LLM
+inference, prompt engineering, JSON-Schema-constrained sampling, and
+chunked extraction. Those topics are taught from first principles.
+General programming basics are assumed.
+
+**Mental-model anchor.** Treat the whole project as a deterministic
+ETL pipeline (read → transform → write) with **one probabilistic step
+in the middle** — the LLM call — boxed in by a JSON Schema on the way
+in and rule-based normalizers on the way out. Everything else is
+ordinary, testable Python.
+
 > Follow this guide top-to-bottom. Each phase ends with you running something
 > and seeing it work before we move to the next one.
 
@@ -149,6 +161,12 @@ tokens. We'll learn to control that in **Phase 2**.
 
 When all five are true, you're ready for Phase 2.
 
+**If it fails:** `ModuleNotFoundError: llama_cpp` → venv isn't active
+(`source venv/bin/activate`) or `pip install -r requirements.txt`
+hasn't been run. `FileNotFoundError` / `failed to load model` →
+re-check the path in `extractor/model.py::DEFAULT_MODEL_PATH` and
+that the `.gguf` finished downloading (size should be ~770 MB).
+
 ---
 
 ## Phase 2: Extraction by prompt
@@ -241,6 +259,13 @@ matching a strict schema. Then downstream code can trust the shape.
 
 When all four are true, you're ready for Phase 3.
 
+**If it fails:** Output drifts off topic or invents fields not in the
+note → the few-shot example in `extractor/prompts.py` may have been
+edited; the model copies its shape. Output is truncated mid-sentence
+→ `max_tokens` in `extract_text` is too low for the note length. If
+the model keeps emitting prose around the answer, re-check
+`SYSTEM_PROMPT` in `prompts.py`.
+
 ---
 
 ## Phase 3: Structured output (JSON schema)
@@ -253,6 +278,16 @@ When all four are true, you're ready for Phase 3.
   **guaranteed** parseable.
 - **`response_format`** — the `llama-cpp-python` parameter that turns
   grammar mode on.
+
+**Why an LLM needs this.** Plain text generation is a probability
+distribution over the next token — at any step, the model *could*
+emit a stray quote, a trailing comma, or a chatty preamble that
+breaks `json.loads`. Grammar-constrained sampling zeros out the
+probability of any token that would make the running output illegal
+under the schema, so the structural risk of LLM output disappears.
+Without it, downstream code has to defensively re-parse and repair
+output, and you end up writing prompt rules ("respond only in JSON")
+that the model still occasionally violates.
 
 ### Why this matters
 
@@ -344,6 +379,13 @@ regex/rule passes and targeted re-prompting.
 
 When all four are true, you're ready for Phase 4.
 
+**If it fails:** `JSONDecodeError` should be impossible here — if you
+see one, `response_format` isn't being passed (check `extract_json`
+in `extractor/extract.py`). If the output JSON is valid but missing
+fields, the schema in `extractor/schema.py` is the contract; verify
+required keys and that the JSON few-shot in `prompts.py` matches the
+schema shape exactly.
+
 ---
 
 ## Phase 4: Cleanup & normalization
@@ -356,6 +398,16 @@ When all four are true, you're ready for Phase 4.
   and modifier trimming.
 - **Idempotency** — running cleanup twice gives the same result as once.
   Important so re-running the pipeline never makes things worse.
+
+**Why an LLM needs this.** LLMs are great at *reading* messy text
+("March 15, 1957", "as needed", "by mouth") but inconsistent at
+*emitting* a single canonical form across many calls — the same model
+on the same input may produce `1957-03-15` one run and `03/15/1957`
+the next. The fix isn't a longer prompt; it's a small deterministic
+post-processor. Rules are free, instant, fully testable, and
+explainable — which matters for audit and regression. Reserve the LLM
+for the part only it can do (turning prose into structured fields)
+and let regex normalize the shape afterwards.
 
 ### When LLM, when rules?
 
@@ -427,6 +479,15 @@ You'll see the raw LLM JSON first, then the cleaned version. Compare:
 
 When all four are true, you're ready for Phase 5.
 
+**If it fails:** Date didn't normalize → the source format isn't in
+`_DATE_PATTERNS` inside `extractor/cleanup.py` (add it, then add a row
+to the `normalize_date` parametrize table in `tests/test_cleanup.py`).
+Modifier merge didn't trigger → check the `_MODIFIER_ONLY` regex
+against the exact phrase the model emitted. Route/frequency stayed
+verbatim → update the `_ROUTE_MAP` / `_FREQ_MAP` lookups. If cleanup
+ever mutates its input, the idempotency/no-mutation tests in
+`tests/test_cleanup.py` will catch it — start there.
+
 ---
 
 ## Phase 5: Document ingestion (.txt + .pdf)
@@ -438,6 +499,17 @@ When all four are true, you're ready for Phase 5.
 - **Chunking with overlap** — splitting a long document into pieces small
   enough to fit in `n_ctx`, with a sliding window so fields don't get cut.
 - **Merging strategies** — combining per-chunk extractions into one record.
+
+**Why an LLM needs this.** Every model has a hard ceiling on how much
+text it can hold in a single call — its **context window** (`n_ctx`).
+Anything past that is silently truncated, and even *before* the
+ceiling, accuracy degrades on long inputs. Chunking + merging lets
+you process arbitrarily long documents through a small-context model
+without losing fields. Overlap exists because a value (a date, a med
+dose) might sit exactly on the boundary between two chunks; a 400-char
+slide guarantees it appears whole in at least one chunk. Without
+this, anything longer than `n_ctx` either crashes, gets truncated, or
+returns garbled JSON.
 
 ### The pipeline so far
 
@@ -495,6 +567,15 @@ about fonts are normal — extraction still works.
 - [ ] You can read `merge_extractions` and predict the dedup strategy.
 
 When all four are true, you're ready for Phase 6.
+
+**If it fails:** PDF read returns empty text → `pypdf` is missing
+(re-install requirements) or the PDF is image-only (scanned, needs
+OCR — out of scope here). Fields appear duplicated across the merged
+output → the dedup key in `merge_extractions` (lowercased name) isn't
+matching; check whitespace/casing in the per-chunk JSON. A field
+appears in one chunk but is dropped after merge → "first-non-null
+scalars" means a later chunk can't overwrite an earlier value; verify
+the *first* chunk's JSON.
 
 ---
 
@@ -575,6 +656,13 @@ dates, diagnosis count, medication count.
 
 When all four are true, you're ready for Phase 7.
 
+**If it fails:** `No module named extractor` → run from the project
+root (`python -m extractor.cli …`), not from inside `extractor/`.
+`Found 0 file(s)` → the `--input` folder has no `.txt`/`.pdf` matches
+for `Path.rglob`; check the path. CLI runs hot or hangs on a long
+note → trim the note instead of bumping `--n-ctx`; see the
+performance notes in `CLAUDE.md`.
+
 ---
 
 ## Phase 7: Tests
@@ -590,6 +678,17 @@ When all four are true, you're ready for Phase 7.
 - **`unittest.mock.MagicMock`** — fake objects that record calls and return
   whatever you tell them to. We mock the Llama model so the pipeline test
   runs in milliseconds, not minutes.
+
+**Why an LLM needs this.** A live LLM call is slow (seconds), heavy
+(GBs of RAM), and — even at `temperature=0` — only mostly
+deterministic across versions and hardware. None of those properties
+are friendly to a CI gate. Mocking `create_chat_completion` with a
+canned JSON response lets you test *the wiring around the model*
+(chunking, merging, cleanup, file I/O) in milliseconds and assert
+exact outputs. The real model's accuracy is a separate concern — that
+gets validated end-to-end in Phase 8. Two different test suites,
+two different questions: "is the code correct?" and "is the model
+useful?"
 
 ### Why we mock the LLM
 
@@ -668,6 +767,14 @@ Expect 55 passing tests in well under a second.
 
 When all four are true, you're ready for the final phase.
 
+**If it fails:** `ModuleNotFoundError: extractor` during tests →
+`tests/conftest.py` adds the project root to `sys.path`; confirm
+you're running `pytest` from the project root. A pipeline test takes
+more than a second → the mock isn't wired; the test is calling the
+real `Llama`. Check `fake_llm` in `tests/test_pipeline_mocked.py`
+and that the test code path goes through the mocked
+`create_chat_completion`.
+
 ---
 
 ## Phase 8: Agent validation
@@ -727,6 +834,13 @@ empty/garbage diagnosis lists when phrasing is unusual ("Healthy 8-year-old").
       expand date normalizer for ISO datetimes).
 - [ ] You can re-run the validation: `rm -rf outputs && python -m extractor.cli --input samples --output outputs`.
 
+**If it fails:** Validation numbers differ from `VALIDATION.md` →
+expected on a different model size or `n_ctx`; record the deltas
+rather than chasing parity. A previously-passing field now FAILs →
+check whether `prompts.py` or `cleanup.py` changed since the last
+recorded run; the LLM call itself is `temperature=0` so prompt and
+rule edits are the usual culprits.
+
 ---
 
 ## Done
@@ -746,7 +860,6 @@ offline-llm/
 ├── INSTRUCTIONS.md     this guide
 ├── EXTRACTOR_EXPLAINED.md
 ├── VALIDATION.md
-├── PROGRESS.md
 ├── CLAUDE.md
 ├── README.md
 └── requirements.txt

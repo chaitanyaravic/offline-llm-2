@@ -220,6 +220,7 @@ returns the cleaned JSON. Keep it local-only — no network calls.
 
 ## How to share what you learned
 
-If you do an exercise that surprises you, append a one-line note to
-`PROGRESS.md` under a `### Lessons` section, dated. Future you (or future
-Claude) will thank you.
+If you do an exercise that surprises you, jot a one-line note (with the
+date) in a `Lessons` section at the bottom of this file — or in a fresh
+`NOTES.md` if you'd rather keep it separate. Future you (or future Claude)
+will thank you.
