@@ -66,6 +66,13 @@ Before any code, here's the mental model:
 A **venv** (virtual environment) is a private folder of Python packages,
 isolated from the rest of your system. Always use one per project.
 
+> **Java analogue.** Think of `venv/` as per-project Maven/Gradle
+> dependency isolation. `requirements.txt` plays the role of
+> `pom.xml` / `build.gradle` (just the dependency list — no build
+> plugins). `pip install -r requirements.txt` is `mvn dependency:resolve`.
+> There's no global classpath to fight; activating the venv just
+> points your shell at the project-local `python` and `pip`.
+
 ```bash
 cd /path/to/offline-llm
 python3 -m venv venv
@@ -289,6 +296,17 @@ Without it, downstream code has to defensively re-parse and repair
 output, and you end up writing prompt rules ("respond only in JSON")
 that the model still occasionally violates.
 
+> **Java analogue.** `EXTRACTION_SCHEMA` plays the same role as a
+> Jackson-deserialised DTO with Bean Validation (`@NotNull`, `@Size`)
+> — it's the contract the inbound payload must satisfy. The
+> *difference* is **where** validation happens: in a Spring controller
+> you validate **after** the JSON arrives ("does this match?"). With
+> grammar-constrained sampling, validation happens **during**
+> generation — the producer literally cannot emit a non-conforming
+> token. Closest analogue: imagine a Jackson serializer that refused
+> to write any field violating the schema, rather than a validator
+> that rejected the result.
+
 ### Why this matters
 
 In Phase 2 the model output was free text. Downstream code couldn't trust it.
@@ -409,6 +427,15 @@ explainable — which matters for audit and regression. Reserve the LLM
 for the part only it can do (turning prose into structured fields)
 and let regex normalize the shape afterwards.
 
+> **Java analogue.** `cleanup.py` is the same shape as a stack of
+> Spring `Converter<S, T>` beans or a Jackson `@JsonDeserialize`
+> module — small, deterministic, unit-testable transforms applied
+> on the way out of the I/O layer. Idempotence + no-mutation are the
+> same invariants you'd expect from a pure converter. In banking
+> terms: the LLM is the data-entry clerk; this module is the
+> reference-data canonicalisation pass before the record hits the
+> ledger.
+
 ### When LLM, when rules?
 
 ```
@@ -511,6 +538,14 @@ slide guarantees it appears whole in at least one chunk. Without
 this, anything longer than `n_ctx` either crashes, gets truncated, or
 returns garbled JSON.
 
+> **Java analogue.** This is the LLM equivalent of Spring Batch's
+> chunk-oriented processing: split a large payload into pages that
+> fit a downstream constraint (there, a transaction boundary; here,
+> `n_ctx`), process each page, then reduce. `merge_extractions` is
+> the reducer. The overlap window is the same idea as fetching a
+> trailing row when paginating a join — it stops records from being
+> sliced across page boundaries.
+
 ### The pipeline so far
 
 ```
@@ -589,6 +624,13 @@ the *first* chunk's JSON.
   than `python path/to/cli.py` because it works regardless of where you `cd`.
 - **`Path.rglob`** — recursively glob a folder for files matching a pattern.
 - **`csv.DictWriter`** — writing rows as dicts into a CSV file.
+
+> **Java analogue.** `argparse` ≈ picocli (or Spring Shell, minus the
+> interactive REPL) — declare flags, get parsed values handed to your
+> `main`. `python -m extractor.cli …` is the rough equivalent of
+> `java -cp app.jar com.example.Cli …` — fully qualified entry point,
+> independent of working directory. `csv.DictWriter` ≈
+> `OpenCSV`'s `StatefulBeanToCsv`.
 
 ### Files added in this phase
 
@@ -690,6 +732,15 @@ gets validated end-to-end in Phase 8. Two different test suites,
 two different questions: "is the code correct?" and "is the model
 useful?"
 
+> **JUnit analogue.** `pytest` ≈ JUnit 5. `@pytest.mark.parametrize`
+> ≈ `@ParameterizedTest` + `@MethodSource` (table-driven cases, one
+> reported pass/fail per row). The `tmp_path` fixture ≈ JUnit's
+> `@TempDir`. `MagicMock` for `llm.create_chat_completion` ≈
+> Mockito's `when(llm.createChatCompletion(any())).thenReturn(...)`.
+> The split between mocked unit tests (Phase 7) and a real
+> end-to-end run (Phase 8) maps directly onto unit vs.
+> integration tests in a Java pipeline.
+
 ### Why we mock the LLM
 
 ```
@@ -788,6 +839,14 @@ and that the test code path goes through the mocked
   output shape) separately, so failures are diagnosable.
 - **Honest reporting** — record both PASS and FAIL (and PARTIAL), and
   explain *why* each failure happened.
+
+> **Java analogue.** Treat `VALIDATION.md` as the regression / UAT
+> report you'd produce for a model-risk review board: dimensions are
+> the acceptance criteria, the per-row grid is the test evidence,
+> and the summary table is the release gate. Unit tests (Phase 7)
+> answer "does the plumbing work?"; this answers "does the model
+> meet its acceptance criteria?" — the same split a bank's MRM
+> team draws between code review and model performance review.
 
 ### How the report is built
 
